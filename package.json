@@ -8,8 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
-    "next": "10.0.8",
-    "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "autoprefixer": "^10.4.16",
+    "next": "^15.5.2",
+    "postcss": "^8.4.31",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   }
 }
