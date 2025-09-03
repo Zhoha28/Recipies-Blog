@@ -1,62 +1,62 @@
-# Recipes Blog 🍴  
+# The Recipe Journal 🍴  
 
-A **Recipes Blog** built with **Next.js** and **Contentful**.  
-This project is designed to showcase modern web development practices with a headless CMS, dynamic content, and a clean UI for browsing and reading recipes.  
+A modern **Recipe Blog** built with **Next.js** and **Contentful**.  
+This project showcases how to integrate a headless CMS with a Next.js frontend, featuring dynamic recipe pages, optimized images, and a clean responsive UI.  
 
 ---
 
 ## 🚀 Getting Started  
 
-To create a new project using this starter, run the following in your terminal:  
-
+### 1. Clone the repository
 ```bash
-npx create-next-app recipies-blog -e iamshaunjp/next-contentful
+git clone https://github.com/Zhoha28/Recipies-Blog.git
+cd Recipies-Blog
 ```
 
-or with the full GitHub link:  
-
+### 2. Install dependencies
 ```bash
-npx create-next-app recipies-blog --example "https://github.com/iamshaunjp/next-contentful/tree/lesson-1-starter-site"
+npm install
 ```
+
+### 3. Setup environment variables
+Create a `.env.local` file in the root and add your Contentful credentials:  
+
+```env
+CONTENTFUL_SPACE_ID=your_space_id
+CONTENTFUL_ACCESS_KEY=your_access_key
+```
+
+### 4. Run the development server
+```bash
+npm run dev
+```
+
+Now open [http://localhost:3000](http://localhost:3000) in your browser 🚀  
 
 ---
 
 ## 🛠️ Tech Stack  
 
-- [Next.js](https://nextjs.org/) – React framework for production  
-- [Contentful](https://www.contentful.com/) – Headless CMS for managing recipes  
+- [Next.js](https://nextjs.org/) – React framework with static & server rendering  
+- [Contentful](https://www.contentful.com/) – Headless CMS for content management  
 - [React](https://reactjs.org/) – Component-based UI library  
-- [Tailwind CSS](https://tailwindcss.com/) (optional, for styling if added later)  
+- [Next.js Image Optimization](https://nextjs.org/docs/basic-features/image-optimization) – Optimized recipe thumbnails & featured images  
+- [Google Fonts](https://fonts.google.com/) – Playfair Display + Inter for typography  
 
 ---
 
 ## 📌 Features  
 
-- Recipe listings pulled from Contentful  
-- Individual recipe detail pages (ingredients & instructions)  
-- Responsive design for mobile & desktop  
-- SEO-friendly blog structure  
-- Optional search & filter by recipe type  
-
----
-
-## 🔑 Setup Instructions  
-
-1. Clone the repo or create with `create-next-app` (see above).  
-2. Install dependencies:  
-   ```bash
-   npm install
-   ```  
-3. Create a `.env.local` file in the root and add your Contentful credentials:  
-   ```env
-   CONTENTFUL_SPACE_ID=your_space_id
-   CONTENTFUL_ACCESS_TOKEN=your_access_token
-   ```  
-4. Run the development server:  
-   ```bash
-   npm run dev
-   ```  
-   Open [http://localhost:3000](http://localhost:3000) to view it in the browser.  
+- 📖 **Recipe Listing Page** – fetches recipes dynamically from Contentful  
+- 🖼 **Recipe Cards** – consistent grid layout with images, cooking time, and links  
+- 🍳 **Dynamic Recipe Detail Pages** – generated via `[slug].js`, showing:  
+  - Title & Featured Image  
+  - Cooking Time  
+  - Ingredients (list)  
+  - Method (rendered from Contentful Rich Text)  
+- 📱 **Responsive Design** – mobile-first layout with modern styling  
+- ⚡ **Optimized Images** – Contentful images rendered through Next.js `<Image />`  
+- 🎨 **Modern UI** – clean fonts, colors, and consistent card heights  
 
 ---
 
@@ -64,12 +64,11 @@ npx create-next-app recipies-blog --example "https://github.com/iamshaunjp/next-
 
 The easiest way to deploy this project is with [Vercel](https://vercel.com/):  
 
-1. Push your project to GitHub.  
-2. Go to [Vercel](https://vercel.com/), import the repo, and follow the prompts.  
-3. Add the following environment variables in your Vercel project settings:  
+1. Push this repo to GitHub.  
+2. Import it into Vercel and set up environment variables:  
    - `CONTENTFUL_SPACE_ID`  
-   - `CONTENTFUL_ACCESS_TOKEN`  
-4. Deploy 🚀  
+   - `CONTENTFUL_ACCESS_KEY`  
+3. Deploy 🚀  
 
 Your blog will be live on a `vercel.app` domain (or a custom domain if you set one).  
 
@@ -79,3 +78,6 @@ Your blog will be live on a `vercel.app` domain (or a custom domain if you set o
 
 - [Next.js Documentation](https://nextjs.org/docs)  
 - [Contentful Docs](https://www.contentful.com/developers/docs/)  
+- [Vercel Deployment Guide](https://vercel.com/docs)  
+
+---
