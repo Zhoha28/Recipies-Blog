@@ -1,5 +1,7 @@
 import { createClient } from "contentful";
 import RecipieCard from "../components/RecipieCard";
+import Head from "next/head";
+
 
 export async function getStaticProps() {
   const client = createClient({
@@ -21,6 +23,18 @@ export async function getStaticProps() {
 
 export default function Recipes({ recipies }) {
   return (
+    <>
+     <Head>
+        <title>The Recipe Journal 🍴</title>
+        <meta name="description" content="A modern recipes blog built with Next.js and Contentful. Browse delicious recipes with ingredients and cooking methods." />
+        <meta name="keywords" content="recipes, cooking, food blog, next.js, contentful" />
+        <meta property="og:title" content="The Recipe Journal 🍴" />
+        <meta property="og:description" content="Discover new recipes, ingredients, and cooking inspiration." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://recipies-blog.vercel.app/" />
+        <meta property="og:image" content="/preview.jpg" />
+      </Head>
+
     <div className="recipe-list">
 
       {recipies.map((recipe) => {
@@ -34,5 +48,6 @@ export default function Recipes({ recipies }) {
         );
       })}
     </div>
+    </>
   );
 }

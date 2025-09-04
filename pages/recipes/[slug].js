@@ -1,9 +1,7 @@
 import { createClient } from "contentful";
 import Image from "next/image";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
-import Skeleton from "../../components/Skeleton";
 
-// Contentful client
 const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID,
   accessToken: process.env.CONTENTFUL_ACCESS_KEY,
@@ -11,68 +9,61 @@ const client = createClient({
 
 export async function getStaticPaths() {
   const res = await client.getEntries({ content_type: "recipie" });
+  const paths = res.items
+    .filter(i => i.fields?.slug)
+    .map(i => ({ params: { slug: i.fields.slug } }));
 
-  const paths = res.items.map((item) => ({
-    params: { slug: item.fields.slug },
-  }));
-
-  return {
-    paths,
-    fallback: true, // fallback when the page is not generated at build time
-  };
+  return { paths, fallback: false }; // or 'blocking' if you add content post-build
 }
 
 export async function getStaticProps({ params }) {
   const { items } = await client.getEntries({
     content_type: "recipie",
     "fields.slug": params.slug,
+    limit: 1,
   });
 
-  if (!items.length) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
+  // No item? 404.
+  if (!items || items.length === 0) {
+    return { notFound: true };
   }
-  return {
-    props: {
-      recipe: items[0],
-    },
-    revalidate: 1
-  };
+
+  return { props: { recipe: items[0] } };
 }
 
 export default function RecipeDetails({ recipe }) {
+  const { title, cookingTime, ingredients = [], method, featuredImage } =
+    recipe.fields;
 
-  if (!recipe) return <Skeleton />; // Show skeleton while loading
-  const { title, cookingTime, ingredients, method, featuredImage } = recipe.fields;
+  const imgUrl = featuredImage?.fields?.file?.url
+    ? `https:${featuredImage.fields.file.url}`
+    : null;
+  const imgW = featuredImage?.fields?.file?.details?.image?.width || 1200;
+  const imgH = featuredImage?.fields?.file?.details?.image?.height || 630;
 
   return (
-    <div className="recipe-detail">
-      <h2>{title}</h2>
+    <article className="recipe-detail">
+      <h1>{title}</h1>
 
-      {featuredImage?.fields?.file?.url && (
-        <Image className="featured-benner"
-          src={`https:${featuredImage.fields.file.url}`}
-          width={featuredImage.fields.file.details.image.width}
-          height={featuredImage.fields.file.details.image.height}
-          alt={title}
-        />
+      {imgUrl ? (
+        <Image src={imgUrl} width={imgW} height={imgH} alt={title} />
+      ) : (
+        <div className="image-placeholder" aria-hidden="true" />
       )}
 
-      <p>Takes about {cookingTime} mins to cook</p>
+      <p>Takes about {cookingTime} mins</p>
 
-      <h4>Ingredients</h4>
+      <h3>Ingredients</h3>
       <ul>
         {ingredients.map((ing) => (
           <li key={ing}>{ing}</li>
         ))}
       </ul>
 
-      <h4>Method</h4>
-      <div className="method">{documentToReactComponents(method)}</div>
-    </div>
+      <h3>Method</h3>
+      <div className="method">
+        {method ? documentToReactComponents(method) : "Method coming soon."}
+      </div>
+    </article>
   );
 }
