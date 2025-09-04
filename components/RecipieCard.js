@@ -1,13 +1,19 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export default function RecipeCard({ recipe }) {
+export default function RecipieCard({ recipe, priority }) {
   const { title, slug, cookingTime, thumbnail } = recipe.fields;
 
   return (
     <div className="card">
       <div className="featured">
-        <Image src={"https:" + thumbnail.fields.file.url}  width={thumbnail.fields.file.details.image.width} height={thumbnail.fields.file.details.image.height}  alt={title || "Recipe image"} />
+        <Image
+          src={"https:" + thumbnail.fields.file.url}
+          width={thumbnail.fields.file.details.image.width}
+          height={thumbnail.fields.file.details.image.height}
+          alt={title || "Recipe image"}
+          priority={priority} // ✅ only true for the first card
+        />
       </div>
       <div className="content">
         <div className="info">

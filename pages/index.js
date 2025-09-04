@@ -37,13 +37,13 @@ export default function Recipes({ recipies }) {
 
     <div className="recipe-list">
 
-      {recipies.map((recipe) => {
+      {recipies.map((recipe, i) => {
         const { title, slug, cookingTime, thumbnail } = recipe.fields;
 
         return (
           <div key={recipe.sys.id} className="recipe-card">
 
-          <RecipieCard key={recipe.sys.id} recipe={recipe}/>
+          <RecipieCard key={recipe.sys.id} recipe={recipe} priority={i === 0}/>
           </div>
         );
       })}

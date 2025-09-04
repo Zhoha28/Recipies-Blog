@@ -76,13 +76,14 @@ export default function RecipeDetails({ recipe }) {
       <div className="recipe-detail">
         <h2>{title}</h2>
 
- {featuredImage?.fields?.file?.url && (
+{featuredImage?.fields?.file?.url && (
   <div className="recipe-banner">
     <Image
       src={`https:${featuredImage.fields.file.url}`}
-      alt={title || "Recipe image"} // ✅ alt is required
+      alt={title || "Recipe image"}
       fill
       priority
+      sizes="(max-width: 1200px) 100vw, 1200px" 
     />
   </div>
 )}
