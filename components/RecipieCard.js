@@ -7,7 +7,7 @@ export default function RecipeCard({ recipe }) {
   return (
     <div className="card">
       <div className="featured">
-        <Image src={"https:" + thumbnail.fields.file.url}  width={thumbnail.fields.file.details.image.width} height={thumbnail.fields.file.details.image.height}/>
+        <Image src={"https:" + thumbnail.fields.file.url}  width={thumbnail.fields.file.details.image.width} height={thumbnail.fields.file.details.image.height}  alt={title || "Recipe image"} />
       </div>
       <div className="content">
         <div className="info">

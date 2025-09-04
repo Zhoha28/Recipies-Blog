@@ -1,7 +1,10 @@
 import { createClient } from "contentful";
 import Image from "next/image";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
+import Skeleton from "../../components/Skeleton";
+import Head from "next/head";
 
+// Contentful client
 const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID,
   accessToken: process.env.CONTENTFUL_ACCESS_KEY,
@@ -9,61 +12,108 @@ const client = createClient({
 
 export async function getStaticPaths() {
   const res = await client.getEntries({ content_type: "recipie" });
-  const paths = res.items
-    .filter(i => i.fields?.slug)
-    .map(i => ({ params: { slug: i.fields.slug } }));
 
-  return { paths, fallback: false }; // or 'blocking' if you add content post-build
+  const paths = res.items.map((item) => ({
+    params: { slug: item.fields.slug },
+  }));
+
+  return {
+    paths,
+    fallback: true,
+  };
 }
 
 export async function getStaticProps({ params }) {
   const { items } = await client.getEntries({
     content_type: "recipie",
     "fields.slug": params.slug,
-    limit: 1,
   });
 
-  // No item? 404.
-  if (!items || items.length === 0) {
-    return { notFound: true };
+  if (!items.length) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
   }
 
-  return { props: { recipe: items[0] } };
+  return {
+    props: {
+      recipe: items[0],
+    },
+    revalidate: 1,
+  };
 }
 
 export default function RecipeDetails({ recipe }) {
-  const { title, cookingTime, ingredients = [], method, featuredImage } =
+  if (!recipe) return <Skeleton />;
+
+  const { title, cookingTime, ingredients, method, featuredImage } =
     recipe.fields;
 
-  const imgUrl = featuredImage?.fields?.file?.url
-    ? `https:${featuredImage.fields.file.url}`
-    : null;
-  const imgW = featuredImage?.fields?.file?.details?.image?.width || 1200;
-  const imgH = featuredImage?.fields?.file?.details?.image?.height || 630;
-
   return (
-    <article className="recipe-detail">
-      <h1>{title}</h1>
+    <>
+      <Head>
+        <title>{title} | The Recipe Journal</title>
+        <meta
+          name="description"
+          content={`Learn how to cook ${title} step by step.`}
+        />
+        <meta property="og:title" content={`${title} | The Recipe Journal`} />
+        <meta
+          property="og:description"
+          content={"A tasty recipe from The Recipe Journal."}
+        />
+        {featuredImage?.fields?.file?.url && (
+          <meta
+            property="og:image"
+            content={`https:${featuredImage.fields.file.url}`}
+          />
+        )}
+      </Head>
 
-      {imgUrl ? (
-        <Image src={imgUrl} width={imgW} height={imgH} alt={title} />
-      ) : (
-        <div className="image-placeholder" aria-hidden="true" />
-      )}
+      <div className="recipe-detail">
+        <h2>{title}</h2>
 
-      <p>Takes about {cookingTime} mins</p>
+ {featuredImage?.fields?.file?.url && (
+  <div className="recipe-banner">
+    <Image
+      src={`https:${featuredImage.fields.file.url}`}
+      alt={title || "Recipe image"} // ✅ alt is required
+      fill
+      priority
+    />
+  </div>
+)}
 
-      <h3>Ingredients</h3>
-      <ul>
-        {ingredients.map((ing) => (
-          <li key={ing}>{ing}</li>
-        ))}
-      </ul>
+        <p>Takes about {cookingTime} mins to cook</p>
 
-      <h3>Method</h3>
-      <div className="method">
-        {method ? documentToReactComponents(method) : "Method coming soon."}
+        <h4>Ingredients</h4>
+        <ul>
+          {ingredients.map((ing) => (
+            <li key={ing}>{ing}</li>
+          ))}
+        </ul>
+
+        <h4>Method</h4>
+        <div className="method">{documentToReactComponents(method)}</div>
       </div>
-    </article>
+
+      <style jsx>{`
+        .recipe-banner {
+          position: relative;
+          width: 100%;
+          height: 400px; /* max height */
+          margin-bottom: 20px;
+          border-radius: 12px;
+          overflow: hidden;
+        }
+
+        .recipe-banner :global(img) {
+          object-fit: cover;
+        }
+      `}</style>
+    </>
   );
 }
